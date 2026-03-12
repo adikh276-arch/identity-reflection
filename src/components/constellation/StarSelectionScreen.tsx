@@ -83,7 +83,7 @@ const StarSelectionScreen = ({ onComplete, onBack }: StarSelectionScreenProps) =
       className="flex flex-col items-center w-full max-w-sm mx-auto px-3"
     >
       {/* Header with back button */}
-      <div className="w-full flex items-center mb-4">
+      <div className="w-full flex items-center mb-3">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -94,6 +94,13 @@ const StarSelectionScreen = ({ onComplete, onBack }: StarSelectionScreenProps) =
         </motion.button>
         <p className="flex-1 text-center font-reflection text-sm text-foreground/80 text-justified pr-9">
           Tap stars to add parts of who you are.
+        </p>
+      </div>
+
+      {/* Instruction box */}
+      <div className="w-full mb-4 px-3 py-2.5 rounded-xl bg-card/50 border border-border/40">
+        <p className="text-xs text-accent-lavender font-reflection text-justified leading-relaxed">
+          Choose a star and name a strength, identity, or quality that shines in you.
         </p>
       </div>
 
