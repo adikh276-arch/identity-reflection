@@ -38,6 +38,10 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          pink: "hsl(var(--accent-pink))",
+          blue: "hsl(var(--accent-blue))",
+          lavender: "hsl(var(--accent-lavender))",
+          mint: "hsl(var(--accent-mint))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -47,6 +51,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        star: {
+          DEFAULT: "hsl(var(--star-default))",
+          selected: "hsl(var(--star-selected))",
+        },
+        constellation: "hsl(var(--constellation-line))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -65,25 +74,32 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        twinkle: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.3" },
+        },
+        sparkle: {
+          "0%": { transform: "scale(0) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "scale(1.5) rotate(180deg)", opacity: "0" },
+        },
+        "float-up": {
+          "0%": { transform: "translateY(0)", opacity: "1" },
+          "100%": { transform: "translateY(-20px)", opacity: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        twinkle: "twinkle 3s ease-in-out infinite",
+        sparkle: "sparkle 0.6s ease-out forwards",
+        "float-up": "float-up 1s ease-out forwards",
       },
     },
   },
