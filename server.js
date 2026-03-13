@@ -7,7 +7,10 @@ import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-const port = process.env.PORT || 3000;
+
+// Use PORT 80 for production containers by default
+const port = process.env.PORT || 80;
+const subpath = "/identity_reflection";
 
 app.use(express.json());
 
@@ -16,13 +19,14 @@ async function initDb() {
   try {
     const schemaSql = fs.readFileSync(path.join(__dirname, "database", "schema.sql"), "utf8");
     await pool.query(schemaSql);
-    console.log("Database schema initialized successfully.");
+    console.log("Database schema initialized.");
   } catch (err) {
     console.error("Error initializing database schema:", err);
   }
 }
 
-const subpath = "/identity_reflection";
+// Health Check
+app.get(`${subpath}/health`, (req, res) => res.json({ status: "ok" }));
 
 // API Endpoints
 app.post(`${subpath}/api/user/init`, async (req, res) => {
@@ -108,33 +112,29 @@ app.delete(`${subpath}/api/constellations/:id`, async (req, res) => {
   }
 });
 
-// Static files and Routing
-app.use(`${subpath}/`, express.static(path.join(__dirname, "dist")));
+// Static files - Crucial for subpath
+// This serves assets from the 'dist' folder when requested via the subpath
+app.use(subpath, express.static(path.join(__dirname, "dist"), {
+  index: false // Prevent automatic serving of index.html in the static middleware
+}));
 
+// Fallback for SPA routing: Any request to /identity_reflection/* that isn't found above returns index.html
 app.get(`${subpath}*`, (req, res) => {
   const indexPath = path.join(__dirname, "dist", "index.html");
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    // If we're hitting a subpath but no build exists, redirect to '/' (which will go to Vite port in dev)
-    // Or just provide a helpful message.
-    res.status(404).json({ 
-      error: "404 Not Found", 
-      message: "Build artifacts missing. Local Dev Tip: Try visiting http://localhost:8080/identity_reflection/ instead." 
-    });
+    res.status(404).send("Application not built. Please contact support.");
   }
 });
 
-app.get(subpath, (req, res) => {
-  res.redirect(`${subpath}/`);
-});
-
-app.get("/", (req, res) => {
-  res.redirect(`${subpath}/`);
-});
+// Redirect root or subpath without slash
+app.get("/", (req, res) => res.redirect(`${subpath}/`));
+app.get(subpath, (req, res) => res.redirect(`${subpath}/`));
 
 initDb().then(() => {
   app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}${subpath}`);
+    console.log(`Server listening on port ${port}`);
+    console.log(`App available at http://localhost:${port}${subpath}/`);
   });
 });
