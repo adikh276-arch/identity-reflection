@@ -7,8 +7,15 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    open: "/identity_reflection/",
     hmr: {
       overlay: false,
+    },
+    proxy: {
+      "/identity_reflection/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
     },
   },
   plugins: [react()].filter(Boolean),
