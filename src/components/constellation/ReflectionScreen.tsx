@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { StarData } from "@/pages/Index";
 
 interface ReflectionScreenProps {
@@ -8,6 +9,7 @@ interface ReflectionScreenProps {
 }
 
 const ReflectionScreen = ({ stars, onSave, onCreateAnother }: ReflectionScreenProps) => {
+  const { t } = useTranslation();
   const minX = Math.min(...stars.map((s) => s.x));
   const maxX = Math.max(...stars.map((s) => s.x));
   const minY = Math.min(...stars.map((s) => s.y));
@@ -78,10 +80,10 @@ const ReflectionScreen = ({ stars, onSave, onCreateAnother }: ReflectionScreenPr
         transition={{ delay: 1.2 }}
         className="font-reflection text-base leading-relaxed text-foreground/90 mb-8 text-justified"
       >
-        Every star is a part of who you are.
+        {t("reflection_text")}
         <br />
         <span className="text-accent-lavender">
-          Together they create a constellation that is uniquely yours.
+          {t("reflection_subtext")}
         </span>
       </motion.p>
 
@@ -97,7 +99,7 @@ const ReflectionScreen = ({ stars, onSave, onCreateAnother }: ReflectionScreenPr
           onClick={onSave}
           className="bg-gradient-primary px-8 py-2.5 rounded-full text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/30"
         >
-          Save My Constellation
+          {t("save_button")}
         </motion.button>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -105,7 +107,7 @@ const ReflectionScreen = ({ stars, onSave, onCreateAnother }: ReflectionScreenPr
           onClick={onCreateAnother}
           className="px-8 py-2.5 rounded-full border border-secondary text-secondary font-semibold text-sm hover:bg-secondary/10 transition-colors"
         >
-          Create Another
+          {t("create_another")}
         </motion.button>
       </motion.div>
     </motion.div>

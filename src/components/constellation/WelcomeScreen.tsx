@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { History } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -8,6 +9,8 @@ interface WelcomeScreenProps {
 }
 
 const WelcomeScreen = ({ onStart, onHistory, hasHistory }: WelcomeScreenProps) => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -43,9 +46,9 @@ const WelcomeScreen = ({ onStart, onHistory, hasHistory }: WelcomeScreenProps) =
         transition={{ delay: 0.5 }}
         className="font-reflection text-base sm:text-lg leading-relaxed text-foreground/90 mb-8 text-justified"
       >
-        Every identity, every strength, every piece of you is a star in your sky.
+        {t("welcome_text")}
         <br />
-        <span className="text-accent-lavender">Let's create your constellation.</span>
+        <span className="text-accent-lavender">{t("welcome_subtext")}</span>
       </motion.p>
 
       <motion.button
@@ -57,7 +60,7 @@ const WelcomeScreen = ({ onStart, onHistory, hasHistory }: WelcomeScreenProps) =
         onClick={onStart}
         className="bg-gradient-primary px-10 py-3 rounded-full text-primary-foreground font-semibold text-base tracking-wide shadow-lg shadow-primary/30"
       >
-        Start
+        {t("start_button")}
       </motion.button>
 
       {hasHistory && (
@@ -71,7 +74,7 @@ const WelcomeScreen = ({ onStart, onHistory, hasHistory }: WelcomeScreenProps) =
           className="mt-4 flex items-center gap-2 px-6 py-2 rounded-full border border-secondary/50 text-secondary text-sm font-reflection hover:bg-secondary/10 transition-colors"
         >
           <History size={16} />
-          My Constellations
+          {t("my_constellations")}
         </motion.button>
       )}
     </motion.div>

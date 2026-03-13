@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { StarData } from "@/pages/Index";
 import { ArrowLeft, Trash2 } from "lucide-react";
 
@@ -16,6 +17,8 @@ interface HistoryScreenProps {
 }
 
 const HistoryScreen = ({ constellations, onBack, onDelete, onView }: HistoryScreenProps) => {
+  const { t } = useTranslation();
+
   const renderMiniConstellation = (stars: StarData[]) => {
     const minX = Math.min(...stars.map((s) => s.x));
     const maxX = Math.max(...stars.map((s) => s.x));
@@ -68,7 +71,7 @@ const HistoryScreen = ({ constellations, onBack, onDelete, onView }: HistoryScre
           <ArrowLeft size={20} />
         </motion.button>
         <h2 className="flex-1 text-center font-reflection text-lg text-foreground/90">
-          My Constellations
+          {t("my_constellations")}
         </h2>
         <div className="w-9" />
       </div>
@@ -79,7 +82,7 @@ const HistoryScreen = ({ constellations, onBack, onDelete, onView }: HistoryScre
           animate={{ opacity: 1, y: 0 }}
           className="font-reflection text-sm text-muted-foreground text-justified mt-12"
         >
-          No constellations saved yet. Create your first one!
+          {t("no_constellations")}
         </motion.p>
       ) : (
         <div className="w-full space-y-3 max-h-[60vh] overflow-y-auto pr-1">
