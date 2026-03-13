@@ -8,24 +8,25 @@ import fs from "fs";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-// Use PORT 80 for production containers by default
+// Use PORT 80 for production containers
 const port = process.env.PORT || 80;
 const subpath = "/identity_reflection";
 
 app.use(express.json());
 
-// Initialize Database Schema
+// Initialize Database Schema in Background
 async function initDb() {
   try {
+    console.log("Checking database connection...");
     const schemaSql = fs.readFileSync(path.join(__dirname, "database", "schema.sql"), "utf8");
     await pool.query(schemaSql);
     console.log("Database schema initialized.");
   } catch (err) {
-    console.error("Error initializing database schema:", err);
+    console.error("Error initializing database schema (app will still run):", err);
   }
 }
 
-// Health Check
+// Health Check - Respond immediately
 app.get(`${subpath}/health`, (req, res) => res.json({ status: "ok" }));
 
 // API Endpoints
@@ -112,29 +113,32 @@ app.delete(`${subpath}/api/constellations/:id`, async (req, res) => {
   }
 });
 
-// Static files - Crucial for subpath
-// This serves assets from the 'dist' folder when requested via the subpath
-app.use(subpath, express.static(path.join(__dirname, "dist"), {
-  index: false // Prevent automatic serving of index.html in the static middleware
-}));
+// Static files and Routing
+app.use(subpath, express.static(path.join(__dirname, "dist"), { index: false }));
 
-// Fallback for SPA routing: Any request to /identity_reflection/* that isn't found above returns index.html
 app.get(`${subpath}*`, (req, res) => {
   const indexPath = path.join(__dirname, "dist", "index.html");
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).send("Application not built. Please contact support.");
+    res.status(404).json({ error: "Not found" });
   }
 });
 
-// Redirect root or subpath without slash
 app.get("/", (req, res) => res.redirect(`${subpath}/`));
 app.get(subpath, (req, res) => res.redirect(`${subpath}/`));
 
-initDb().then(() => {
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-    console.log(`App available at http://localhost:${port}${subpath}/`);
-  });
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+// Start listening IMMEDIATELY to prevent Gateway (502) timeouts
+app.listen(port, "0.0.0.0", () => {
+  console.log(`>>> Server is now LIVE on port ${port}`);
+  console.log(`>>> Binding to 0.0.0.0 for external accessibility`);
+  console.log(`>>> App available at http://platform.mantracare.com${subpath}/`);
+  
+  // Initialize DB in background after server is up
+  initDb();
 });
