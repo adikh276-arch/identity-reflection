@@ -7,6 +7,8 @@ import LanguageSelector from "@/components/LanguageSelector";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
+import { AuthGuard } from "@/components/AuthGuard";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -16,11 +18,13 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter basename="/identity_reflection">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthGuard>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthGuard>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

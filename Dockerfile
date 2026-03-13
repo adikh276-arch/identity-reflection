@@ -9,20 +9,24 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx:alpine
+FROM node:20-alpine
 
-WORKDIR /usr/share/nginx/html
+WORKDIR /app
 
-# Clean up default files
-RUN rm -rf ./*
+# Copy production dependencies and build artifacts
+COPY package*.json ./
+RUN npm ci --only=production
 
-# Copy build artifacts to the subpath directory
-COPY --from=builder /app/dist /usr/share/nginx/html/identity_reflection
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/lib ./src/lib
+COPY --from=builder /app/database ./database
+COPY --from=builder /app/server.js ./server.js
 
-# Configure Nginx
-RUN rm /etc/nginx/conf.d/default.conf
-COPY vite-nginx.conf /etc/nginx/conf.d/nginx.conf
+# ENV required for Neon and Subpath
+ENV DATABASE_URL=$DATABASE_URL
+ENV NEON_PROJECT_ID=$NEON_PROJECT_ID
+ENV NEON_API_KEY=$NEON_API_KEY
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]
