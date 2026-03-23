@@ -116,13 +116,16 @@ app.delete(`${subpath}/api/constellations/:id`, async (req, res) => {
 // Static files and Routing
 app.use(subpath, express.static(path.join(__dirname, "dist"), { index: false }));
 
-app.get(`${subpath}*`, (req, res) => {
-  const indexPath = path.join(__dirname, "dist", "index.html");
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).json({ error: "Not found" });
+app.use((req, res, next) => {
+  if (req.path.startsWith(subpath)) {
+    const indexPath = path.join(__dirname, "dist", "index.html");
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    } else {
+      return res.status(404).json({ error: "Not found" });
+    }
   }
+  next();
 });
 
 app.get("/", (req, res) => res.redirect(`${subpath}/`));
