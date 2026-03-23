@@ -6,9 +6,9 @@ export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const initializeSession = async () => {
       let userId = sessionStorage.getItem("user_id");
-      if (!userId) {
-        // Generate a random user ID for anonymous guest session
-        userId = "guest_" + Math.random().toString(36).substring(2, 9);
+      if (!userId || isNaN(Number(userId))) {
+        // Generate a random numeric user ID since DB uses BIGINT
+        userId = Math.floor(Math.random() * 9000000000000000).toString();
         sessionStorage.setItem("user_id", userId);
         
         try {
